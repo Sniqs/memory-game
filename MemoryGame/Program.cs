@@ -20,12 +20,17 @@ namespace MemoryGame
                 return;
             }
 
-            string gameDifficulty = GetDifficulty();
-            Console.WriteLine($"Chosen difficulty: {gameDifficulty}");
+            // TODO: Enable the user to choose difficulty
+            // int numberOfWords = GetDifficulty();
+            int numberOfWords = 8;
 
 
+            string[,] gameBoard = CreateGameBoard(words, numberOfWords);
+            
+        }
 
-        static string GetDifficulty()
+
+        static int GetDifficulty()
         {
             bool chosenDifficulty = false;
             string difficulty = "";
@@ -33,14 +38,15 @@ namespace MemoryGame
             Console.Clear();
             Console.WriteLine("Welcome to Memory Game");
             Console.WriteLine("Please select a difficulty (Easy or Hard)");
-            // string difficulty = Console.ReadLine().ToLower();
 
+
+                // Ensure the player chooses either Easy or Hard.
                 while (!chosenDifficulty)
                 {
                     difficulty = Console.ReadLine().ToLower();
                     if (difficulty != "easy" & difficulty != "hard")
                     {
-                        Console.WriteLine("Please select one of the available difficulties (Easy or Hard)");
+                        Console.WriteLine("Please select one of the available difficulties (Easy or Hard).");
                         continue;
                     }
                     else
@@ -49,12 +55,49 @@ namespace MemoryGame
                     }
 
                 }
-                return difficulty;
-
+            if (difficulty == "easy")
+            {
+                return 8;
+            }
+            else
+            {
+                return 16;
+            }
+                
         }
+
+        static string[,] CreateGameBoard(string[] words, int numberOfWords)
+        {
+            List<string> wordList = new List<string>();
+            List<int> alreadyVisited = new List<int>();
+            string[,] gameBoard = new string[4, numberOfWords / 4];
+
+            Random random = new Random();
+
+            while (wordList.Count < numberOfWords)
+            {
+                int randomIndex = random.Next(words.Length);
+                if (!alreadyVisited.Contains(randomIndex))
+                {
+                    alreadyVisited.Add(randomIndex);
+                    wordList.Add(words[randomIndex]);
+                    wordList.Add(words[randomIndex]);
+                }
+            }
+
+            for (int i = 0; i < 4; i++)
+            {
+                for (int j = 0; j < numberOfWords / 4; j++)
+                {
+                    int randomIndex = random.Next(wordList.Count);
+                    gameBoard[i, j] = wordList[randomIndex];
+                    wordList.RemoveAt(randomIndex);
+
+                }
+            }
+
             
-
-
+            return gameBoard;
         }
     }
 }
