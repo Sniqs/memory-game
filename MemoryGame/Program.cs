@@ -15,18 +15,25 @@ namespace MemoryGame
             catch (FileNotFoundException e)
             {
                 Console.WriteLine($"{e.Message}");
-                Console.WriteLine("Make sure that the \"Words.txt\" file is located in the directory given above.");
+                Console.WriteLine("Make sure that the \"Words.txt\" file is located in the directory given above. Press any key.");
                 Console.ReadKey();
                 return;
             }
 
             // TODO: Enable the user to choose difficulty
-            // int numberOfWords = GetDifficulty();
+            //int numberOfWords = GetDifficulty();
             int numberOfWords = 8;
 
 
             string[,] gameBoard = CreateGameBoard(words, numberOfWords);
+
+            DisplayGameBoard(gameBoard);
             
+            //foreach (string word in gameBoard)
+            //{
+            //    Console.WriteLine(word);
+            //}
+
         }
 
 
@@ -70,7 +77,7 @@ namespace MemoryGame
         {
             List<string> wordList = new List<string>();
             List<int> alreadyVisited = new List<int>();
-            string[,] gameBoard = new string[4, numberOfWords / 4];
+            string[,] gameBoard = new string[numberOfWords / 4, 4];
 
             Random random = new Random();
 
@@ -85,9 +92,9 @@ namespace MemoryGame
                 }
             }
 
-            for (int i = 0; i < 4; i++)
+            for (int i = 0; i < numberOfWords / 4; i++)
             {
-                for (int j = 0; j < numberOfWords / 4; j++)
+                for (int j = 0; j < 4; j++)
                 {
                     int randomIndex = random.Next(wordList.Count);
                     gameBoard[i, j] = wordList[randomIndex];
@@ -95,9 +102,26 @@ namespace MemoryGame
 
                 }
             }
-
-            
             return gameBoard;
         }
+
+        static void DisplayGameBoard(string[,] gameBoard)
+        {
+            int columns = gameBoard.GetLength(0);
+            int rows = gameBoard.GetLength(1);
+
+
+
+            for (int i = 0; i < columns; i++)
+            {
+                Console.WriteLine();
+                    for (int j = 0; j < rows; j++)
+                {
+                    Console.Write($" {gameBoard[i, j]}");
+
+                }
+            }
+        }
+
     }
 }
