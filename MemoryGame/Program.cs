@@ -1,7 +1,4 @@
-﻿using System;
-
-
-namespace MemoryGame
+﻿namespace MemoryGame
 {
     class Program
     {
@@ -10,7 +7,7 @@ namespace MemoryGame
             string[] words;
             try
             {
-                words = System.IO.File.ReadAllLines(@"Words.txt");
+                words = File.ReadAllLines(@"Words.txt");
             }
             catch (FileNotFoundException e)
             {
@@ -21,22 +18,29 @@ namespace MemoryGame
             }
 
             // TODO: Enable the user to choose difficulty
-            //int numberOfWords = GetDifficulty();
-            int numberOfWords = 8;
+            //(int rows, int columns) = GetDifficulty();
+
+            int rows = 2;
+            int columns = 4;
 
 
-            string[,] gameBoard = CreateGameBoard(words, numberOfWords);
-            int[,] whichUncovered = new int[numberOfWords / 4, 4];
+            string[,] gameBoard = CreateGameBoard(words, rows, columns);
+            int[,] whichUncovered = new int[rows, columns];
 
             
 
             DisplayGameBoard(gameBoard, whichUncovered);
-        
+            (int firstGuessRow, int firstGuessColumn) = GetPlayerGuess(rows, columns);
+
+            Console.WriteLine(firstGuessRow);
+            Console.WriteLine(firstGuessColumn);
+
+
 
         }
 
 
-        static int GetDifficulty()
+        static (int, int) GetDifficulty()
         {
             bool chosenDifficulty = false;
             string difficulty = "";
@@ -63,24 +67,25 @@ namespace MemoryGame
                 }
             if (difficulty == "easy")
             {
-                return 8;
+                return (2, 4);
             }
             else
             {
-                return 16;
+                return (4, 4);
             }
                 
         }
 
-        static string[,] CreateGameBoard(string[] words, int numberOfWords)
+        static string[,] CreateGameBoard(string[] words, int rows, int columns)
         {
             List<string> wordList = new List<string>();
             List<int> alreadyVisited = new List<int>();
-            string[,] gameBoard = new string[numberOfWords / 4, 4];
+            string[,] gameBoard = new string[rows, columns];
+            
 
             Random random = new Random();
 
-            while (wordList.Count < numberOfWords)
+            while (wordList.Count < rows * columns)
             {
                 int randomIndex = random.Next(words.Length);
                 if (!alreadyVisited.Contains(randomIndex))
@@ -91,9 +96,9 @@ namespace MemoryGame
                 }
             }
 
-            for (int i = 0; i < numberOfWords / 4; i++)
+            for (int i = 0; i < rows; i++)
             {
-                for (int j = 0; j < 4; j++)
+                for (int j = 0; j < columns; j++)
                 {
                     int randomIndex = random.Next(wordList.Count);
                     gameBoard[i, j] = wordList[randomIndex];
@@ -110,9 +115,9 @@ namespace MemoryGame
             int rows = gameBoard.GetLength(1);
 
             Console.Write(" ");
-            for (int i = 1; i < 5; i++)
+            for (int i = 0; i < rows; i++)
             {
-                Console.Write($" {i}");
+                Console.Write($" {i+1}");
             }
             Console.WriteLine();
 
@@ -135,6 +140,55 @@ namespace MemoryGame
                 }
                 Console.WriteLine();
             }
+        }
+
+
+        static (int, int) GetPlayerGuess(int rows, int columns)
+        {
+            bool validGuess = false;
+            int convertedGuessRow = new int();
+            int convertedGuessColumn = new int();
+
+
+
+            while (!validGuess)
+            {
+                Console.Write("Take a guess: ");
+                string playerGuess = Console.ReadLine().ToUpper();
+                if (playerGuess == "")
+                {
+                    Console.WriteLine("You haven't chosen anything. Take a valid guess.");
+                }
+                else if (playerGuess.Length > 2)
+                {
+                    Console.WriteLine("Your guess is too long. Try again.");
+                }
+                else if (playerGuess.Length < 2)
+                {
+                    Console.WriteLine("Your guess is too short. Try again.");
+                }
+                else if (Char.IsLetter(playerGuess, 0) == false)
+                {
+                    Console.WriteLine("The first character needs to be a letter. Try again.");
+                }
+                else if (Char.IsDigit(playerGuess, 1) == false)
+                {
+                    Console.WriteLine("The second character needs to be a digit. Try again.");
+                }
+                else
+                {
+                    convertedGuessRow = playerGuess[0] - 65;
+                    convertedGuessColumn = playerGuess[1] - 49;
+                    if (convertedGuessRow < 0 || convertedGuessRow > rows - 1 || convertedGuessColumn < 0 || convertedGuessColumn > columns - 1)
+                    {
+                        Console.WriteLine("Your guess is out of bounds. Try again.");
+                        continue;
+                    }
+                    validGuess = true;
+                }
+            }
+            return (convertedGuessRow, convertedGuessColumn);
+
         }
 
     }
