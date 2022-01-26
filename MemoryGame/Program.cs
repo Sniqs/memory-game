@@ -26,13 +26,12 @@ namespace MemoryGame
 
 
             string[,] gameBoard = CreateGameBoard(words, numberOfWords);
+            int[,] whichUncovered = new int[numberOfWords / 4, 4];
 
-            DisplayGameBoard(gameBoard);
             
-            //foreach (string word in gameBoard)
-            //{
-            //    Console.WriteLine(word);
-            //}
+
+            DisplayGameBoard(gameBoard, whichUncovered);
+        
 
         }
 
@@ -43,7 +42,7 @@ namespace MemoryGame
             string difficulty = "";
 
             Console.Clear();
-            Console.WriteLine("Welcome to Memory Game");
+            Console.WriteLine("Hello, Dave, welcome to Memory Game.");
             Console.WriteLine("Please select a difficulty (Easy or Hard)");
 
 
@@ -105,21 +104,36 @@ namespace MemoryGame
             return gameBoard;
         }
 
-        static void DisplayGameBoard(string[,] gameBoard)
+        static void DisplayGameBoard(string[,] gameBoard, int[,] whichUncovered)
         {
             int columns = gameBoard.GetLength(0);
             int rows = gameBoard.GetLength(1);
 
+            Console.Write(" ");
+            for (int i = 1; i < 5; i++)
+            {
+                Console.Write($" {i}");
+            }
+            Console.WriteLine();
 
-
+                        
             for (int i = 0; i < columns; i++)
             {
-                Console.WriteLine();
+                Console.Write($"{Convert.ToChar(i+65)} ");
                     for (int j = 0; j < rows; j++)
                 {
-                    Console.Write($" {gameBoard[i, j]}");
+                    if (whichUncovered[i,j] == 0)
+                    {
+                        Console.Write("X ");
+                    }
+                    else
+                    {
+                        Console.Write($"{gameBoard[i, j]} ");
+                    }
+                    
 
                 }
+                Console.WriteLine();
             }
         }
 
