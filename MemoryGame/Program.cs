@@ -56,7 +56,7 @@
         }
 
 
-        static (int, int) GetDifficulty()
+        static (int, int, int, string) GetDifficulty()
         {
             bool chosenDifficulty = false;
             string difficulty = "";
@@ -83,23 +83,23 @@
                 }
             if (difficulty == "easy")
             {
-                return (2, 4);
+                return (2, 4, 10, "Easy");
             }
             else
             {
-                return (4, 4);
+                return (4, 4, 15, "Hard");
             }
                 
         }
 
         static string[,] CreateGameBoard(string[] words, int rows, int columns)
         {
-            List<string> wordList = new List<string>();
-            List<int> alreadyVisited = new List<int>();
+            List<string> wordList = new();
+            List<int> alreadyVisited = new();
             string[,] gameBoard = new string[rows, columns];
             
 
-            Random random = new Random();
+            Random random = new();
 
             while (wordList.Count < rows * columns)
             {
@@ -125,10 +125,23 @@
             return gameBoard;
         }
 
-        static void DisplayGameBoard(string[,] gameBoard, int[,] whichUncovered)
+        static void DisplayGameBoard(string[,] gameBoard, int[,] whichUncovered, int chancesLeft, string difficulty)
         {
             int rows = gameBoard.GetLength(0);
             int columns = gameBoard.GetLength(1);
+
+            Console.Clear();
+
+            Console.WriteLine($"Difficulty: {difficulty}");
+            if (chancesLeft > 0)
+            {
+                Console.WriteLine($"Chances left: {chancesLeft}");
+            }
+            else
+            {
+                Console.WriteLine("Last chance!");
+            }
+            
 
             Console.Write(" ");
             for (int i = 0; i < columns; i++)
@@ -228,33 +241,31 @@
 
         static void GameLoop(string[] words)
         {
-            
+
             // TODO: Enable the user to choose difficulty
-            //(int rows, int columns) = GetDifficulty();
+            //(int rows, int columns, int chancesLeft, string difficulty) = GetDifficulty();
 
             int rows = 2;
             int columns = 2;
+            int chancesLeft = 2;
+            string difficulty = "Test";
 
 
             string[,] gameBoard = CreateGameBoard(words, rows, columns);
             int[,] whichUncovered = new int[rows, columns];
 
-            while (true)
+            while (chancesLeft >= 0)
             {
-                Console.Clear();
-                DisplayGameBoard(gameBoard, whichUncovered);
+                
+                DisplayGameBoard(gameBoard, whichUncovered, chancesLeft, difficulty);
                 (int firstGuessRow, int firstGuessColumn) = GetPlayerGuess(rows, columns, whichUncovered);
-               
                 whichUncovered[firstGuessRow, firstGuessColumn] = 1;
 
-                Console.Clear();
-                DisplayGameBoard(gameBoard, whichUncovered);
+                DisplayGameBoard(gameBoard, whichUncovered, chancesLeft, difficulty);
                 (int secondGuessRow, int secondGuessColumn) = GetPlayerGuess(rows, columns, whichUncovered);
                 whichUncovered[secondGuessRow, secondGuessColumn] = 1;
 
-                Console.Clear();
-                DisplayGameBoard(gameBoard, whichUncovered);
-
+                DisplayGameBoard(gameBoard, whichUncovered, chancesLeft, difficulty);
                 if (gameBoard[firstGuessRow, firstGuessColumn] == gameBoard[secondGuessRow, secondGuessColumn])
                 {
                     Console.WriteLine("Good job, the words match.");
@@ -262,10 +273,11 @@
                 }
                 else
                 {
-                    Console.WriteLine("These words don't match. Try again.");
+                    Console.WriteLine("These words don't match.");
                     Thread.Sleep(3000);
                     whichUncovered[firstGuessRow, firstGuessColumn] = 0;
                     whichUncovered[secondGuessRow, secondGuessColumn] = 0;
+                    chancesLeft -= 1;
                 }
 
                 if (IsGameWon(whichUncovered))
@@ -277,6 +289,7 @@
                 }
                 
             }
+            Console.WriteLine("Sorry, you ran out of chances.");
         }
 
     }
