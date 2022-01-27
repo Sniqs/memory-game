@@ -71,7 +71,7 @@
         /// <returns>The name of the difficulty as well as the number of rows, columns and chances for that difficulty.</returns>
         static (int, int, int, string) GetDifficulty()
         {
-            Console.WriteLine("Please select a difficulty (Easy or Hard).");
+            Console.WriteLine("Please select a difficulty (Easy, Hard or Nightmare).");
 
             // Ensure the player chooses a valid difficulty.
             bool chosenDifficulty = false;
@@ -80,9 +80,9 @@
             while (!chosenDifficulty)
             {
                 difficulty = Console.ReadLine().ToLower();
-                if (difficulty != "easy" & difficulty != "hard")
+                if (difficulty != "easy" & difficulty != "hard" & difficulty != "nightmare")
                 {
-                    Console.WriteLine("Please select one of the available difficulties (Easy or Hard).");
+                    Console.WriteLine("Please select one of the available difficulties (Easy, Hard or Nightmare).");
                     continue;
                 }
                 else
@@ -96,9 +96,13 @@
             {
                 return (2, 4, 10, "Easy");
             }
-            else
+            else if (difficulty == "hard")
             {
                 return (4, 4, 15, "Hard");
+            }
+            else
+            {
+                return (10, 6, 15, "Nightmare");
             }  
         }
 
@@ -378,6 +382,7 @@
                     return;
                 }
             }
+            Console.Clear();
             Console.WriteLine("Sorry, you ran out of chances.");
         }
     }
