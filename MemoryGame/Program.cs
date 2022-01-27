@@ -17,25 +17,10 @@
                 return;
             }
 
-            // TODO: Enable the user to choose difficulty
-            //(int rows, int columns) = GetDifficulty();
 
-            int rows = 2;
-            int columns = 4;
-
-
-            string[,] gameBoard = CreateGameBoard(words, rows, columns);
-            int[,] whichUncovered = new int[rows, columns];
+            GameLoop(words);
 
             
-
-            DisplayGameBoard(gameBoard, whichUncovered);
-            (int firstGuessRow, int firstGuessColumn) = GetPlayerGuess(rows, columns);
-
-            Console.WriteLine(firstGuessRow);
-            Console.WriteLine(firstGuessColumn);
-
-
 
         }
 
@@ -46,7 +31,7 @@
             string difficulty = "";
 
             Console.Clear();
-            Console.WriteLine("Hello, Dave, welcome to Memory Game.");
+            Console.WriteLine("Hello, welcome to Memory Game.");
             Console.WriteLine("Please select a difficulty (Easy or Hard)");
 
 
@@ -111,21 +96,21 @@
 
         static void DisplayGameBoard(string[,] gameBoard, int[,] whichUncovered)
         {
-            int columns = gameBoard.GetLength(0);
-            int rows = gameBoard.GetLength(1);
+            int rows = gameBoard.GetLength(0);
+            int columns = gameBoard.GetLength(1);
 
             Console.Write(" ");
-            for (int i = 0; i < rows; i++)
+            for (int i = 0; i < columns; i++)
             {
                 Console.Write($" {i+1}");
             }
             Console.WriteLine();
 
                         
-            for (int i = 0; i < columns; i++)
+            for (int i = 0; i < rows; i++)
             {
                 Console.Write($"{Convert.ToChar(i+65)} ");
-                    for (int j = 0; j < rows; j++)
+                    for (int j = 0; j < columns; j++)
                 {
                     if (whichUncovered[i,j] == 0)
                     {
@@ -142,8 +127,8 @@
             }
         }
 
-
-        static (int, int) GetPlayerGuess(int rows, int columns)
+        
+        static (int, int) GetPlayerGuess(int rows, int columns, int[,]whichUncovered)
         {
             bool validGuess = false;
             int convertedGuessRow = new int();
@@ -184,11 +169,62 @@
                         Console.WriteLine("Your guess is out of bounds. Try again.");
                         continue;
                     }
+
+                    else if (whichUncovered[convertedGuessRow, convertedGuessColumn] == 1)
+                    {
+                        Console.WriteLine("This word is already visible. Try again.");
+                        continue;
+                    }
+
                     validGuess = true;
                 }
             }
             return (convertedGuessRow, convertedGuessColumn);
 
+        }
+
+        static void GameLoop(string[] words)
+        {
+            
+            // TODO: Enable the user to choose difficulty
+            //(int rows, int columns) = GetDifficulty();
+
+            int rows = 2;
+            int columns = 4;
+
+
+            string[,] gameBoard = CreateGameBoard(words, rows, columns);
+            int[,] whichUncovered = new int[rows, columns];
+
+            while (true)
+            {
+                Console.Clear();
+                DisplayGameBoard(gameBoard, whichUncovered);
+                (int firstGuessRow, int firstGuessColumn) = GetPlayerGuess(rows, columns, whichUncovered);
+               
+                whichUncovered[firstGuessRow, firstGuessColumn] = 1;
+
+                Console.Clear();
+                DisplayGameBoard(gameBoard, whichUncovered);
+                (int secondGuessRow, int secondGuessColumn) = GetPlayerGuess(rows, columns, whichUncovered);
+                whichUncovered[secondGuessRow, secondGuessColumn] = 1;
+
+                Console.Clear();
+                DisplayGameBoard(gameBoard, whichUncovered);
+
+                if (gameBoard[firstGuessRow, firstGuessColumn] == gameBoard[secondGuessRow, secondGuessColumn])
+                {
+                    Console.WriteLine("Good job, the words match.");
+                    Thread.Sleep(3000);
+                }
+                else
+                {
+                    Console.WriteLine("These words don't match. Try again.");
+                    Thread.Sleep(3000);
+                    whichUncovered[firstGuessRow, firstGuessColumn] = 0;
+                    whichUncovered[secondGuessRow, secondGuessColumn] = 0;
+                }
+            }
         }
 
     }
