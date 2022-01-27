@@ -23,7 +23,16 @@
             while (keepPlaying)
             {
                 Console.Clear();
+
                 Console.WriteLine("Hello, welcome to Memory Game.");
+                Console.WriteLine();
+                Console.WriteLine("The objective of this game is to find matching words in a grid." +
+                    "\nEach round you will be asked to select two fields." +
+                    "\nIf these fields contain the same word, they will be uncovered." +
+                    "\nIf not, they will be hidden again and you will lose one chance." +
+                    "\nTo win, uncover all the words before you run out of chances.\nGood luck!\n\nPress any key to start.");
+                Console.ReadKey();
+                Console.Clear();
 
                 GameLoop(words);
 
@@ -125,10 +134,11 @@
             return gameBoard;
         }
 
-        static void DisplayGameBoard(string[,] gameBoard, int[,] whichUncovered, int chancesLeft, string difficulty)
+        static void DisplayGameBoard(string[,] gameBoard, int[,] whichUncovered, int chancesLeft, string difficulty, int largestField)
         {
             int rows = gameBoard.GetLength(0);
             int columns = gameBoard.GetLength(1);
+            string dashedLine = new string('-', (largestField * columns) + 3 + columns);
 
             Console.Clear();
 
@@ -141,34 +151,42 @@
             {
                 Console.WriteLine("Last chance!");
             }
-            
 
-            Console.Write(" ");
+            Console.WriteLine();
+                        
+
+            Console.Write("  |");
             for (int i = 0; i < columns; i++)
             {
-                Console.Write($" {i+1}");
+                Console.Write(PadString($"{i+1}", largestField) + '|');
             }
             Console.WriteLine();
+            
+            
 
                         
             for (int i = 0; i < rows; i++)
             {
-                Console.Write($"{Convert.ToChar(i+65)} ");
+                Console.WriteLine(dashedLine);
+                Console.Write($"{Convert.ToChar(i+65)} |");
                     for (int j = 0; j < columns; j++)
                 {
                     if (whichUncovered[i,j] == 0)
                     {
-                        Console.Write("X ");
+                        Console.Write(PadString("X", largestField) + '|');
                     }
                     else
                     {
-                        Console.Write($"{gameBoard[i, j]} ");
+                        Console.Write(PadString($"{gameBoard[i, j]}", largestField) + '|');
                     }
                     
 
                 }
+                
                 Console.WriteLine();
             }
+            Console.WriteLine(dashedLine);
+            Console.WriteLine();
         }
 
         
@@ -182,7 +200,6 @@
 
             while (!validGuess)
             {
-                Console.WriteLine();
                 Console.Write("Select one of the fields by entering its coordinates (Example: A1): ");
                 string playerGuess = Console.ReadLine().ToUpper();
                 Console.WriteLine();
@@ -242,33 +259,61 @@
             return true;
         }
 
+        static int GetLengthOfLongestWord(string[,] gameBoard)
+        {
+            int length = 0;
+
+            foreach(string word in gameBoard)
+            {
+                if(word.Length > length)
+                {
+                    length = word.Length;
+                }
+            }
+            return length;
+        }
+
+
+        static string PadString (string stringToPad, int desiredLength)
+        {
+            
+            int padding = (desiredLength - stringToPad.Length) / 2;
+            string leftPadding = new String(' ', padding);
+            stringToPad = leftPadding + stringToPad;
+            string paddedString = stringToPad.PadRight(desiredLength, ' ');
+
+            return paddedString;
+        }
+
         static void GameLoop(string[] words)
         {
 
             // TODO: Enable the user to choose difficulty
-            //(int rows, int columns, int chancesLeft, string difficulty) = GetDifficulty();
+            // (int rows, int columns, int chancesLeft, string difficulty) = GetDifficulty();
 
-            int rows = 2;
-            int columns = 2;
+            int rows = 4;
+            int columns = 4;
             int chancesLeft = 2;
             string difficulty = "Test";
 
 
             string[,] gameBoard = CreateGameBoard(words, rows, columns);
+            int largestField = GetLengthOfLongestWord(gameBoard) + 2;
             int[,] whichUncovered = new int[rows, columns];
+            
 
             while (chancesLeft >= 0)
             {
                 
-                DisplayGameBoard(gameBoard, whichUncovered, chancesLeft, difficulty);
+                DisplayGameBoard(gameBoard, whichUncovered, chancesLeft, difficulty, largestField);
                 (int firstGuessRow, int firstGuessColumn) = GetPlayerGuess(rows, columns, whichUncovered);
                 whichUncovered[firstGuessRow, firstGuessColumn] = 1;
 
-                DisplayGameBoard(gameBoard, whichUncovered, chancesLeft, difficulty);
+                DisplayGameBoard(gameBoard, whichUncovered, chancesLeft, difficulty, largestField);
                 (int secondGuessRow, int secondGuessColumn) = GetPlayerGuess(rows, columns, whichUncovered);
                 whichUncovered[secondGuessRow, secondGuessColumn] = 1;
 
-                DisplayGameBoard(gameBoard, whichUncovered, chancesLeft, difficulty);
+                DisplayGameBoard(gameBoard, whichUncovered, chancesLeft, difficulty, largestField);
                 if (gameBoard[firstGuessRow, firstGuessColumn] == gameBoard[secondGuessRow, secondGuessColumn])
                 {
                     Console.WriteLine("Good job, the words match.");
