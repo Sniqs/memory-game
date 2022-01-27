@@ -4,7 +4,10 @@
     {
         static void Main(string[] args)
         {
+            bool keepPlaying = true;
+            
             string[] words;
+
             try
             {
                 words = File.ReadAllLines(@"Words.txt");
@@ -17,8 +20,36 @@
                 return;
             }
 
+            while (keepPlaying)
+            {
+                GameLoop(words);
 
-            GameLoop(words);
+                bool invalidAnswer = true;
+                while (invalidAnswer)
+                {
+                    Console.WriteLine("Would you like to play again? (Yes/No)");
+                    string playAgain = Console.ReadLine().ToLower();
+                    if (playAgain == "y" || playAgain == "yes")
+                    {
+                        invalidAnswer = false;
+                    }
+                    else if (playAgain == "n" || playAgain == "no")
+                    {
+                        invalidAnswer = false;
+                        keepPlaying = false;
+                    }
+                    else
+                    {
+                        Console.Write("I don't understand. ");
+                    }
+                }
+                
+
+            }
+
+            Console.WriteLine("Thank you for playing Memory Game. Have a nice day. Press any key to exit.");
+            Console.ReadKey();
+            
 
             
 
@@ -183,6 +214,18 @@
 
         }
 
+        static bool IsGameWon(int[,] whichUncovered)
+        {
+            foreach (int item in whichUncovered)
+            {
+                if (item == 0)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
         static void GameLoop(string[] words)
         {
             
@@ -190,7 +233,7 @@
             //(int rows, int columns) = GetDifficulty();
 
             int rows = 2;
-            int columns = 4;
+            int columns = 2;
 
 
             string[,] gameBoard = CreateGameBoard(words, rows, columns);
@@ -224,6 +267,15 @@
                     whichUncovered[firstGuessRow, firstGuessColumn] = 0;
                     whichUncovered[secondGuessRow, secondGuessColumn] = 0;
                 }
+
+                if (IsGameWon(whichUncovered))
+                {
+                    Console.Clear();
+                    Console.WriteLine("Congratulations! You've uncovered all the words!");
+                    Thread.Sleep(2000);
+                    return;
+                }
+                
             }
         }
 
