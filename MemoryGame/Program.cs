@@ -22,6 +22,9 @@
 
             while (keepPlaying)
             {
+                Console.Clear();
+                Console.WriteLine("Hello, welcome to Memory Game.");
+
                 GameLoop(words);
 
                 bool invalidAnswer = true;
@@ -61,10 +64,7 @@
             bool chosenDifficulty = false;
             string difficulty = "";
 
-            Console.Clear();
-            Console.WriteLine("Hello, welcome to Memory Game.");
-            Console.WriteLine("Please select a difficulty (Easy or Hard)");
-
+            Console.WriteLine("Please select a difficulty (Easy or Hard).");
 
                 // Ensure the player chooses either Easy or Hard.
                 while (!chosenDifficulty)
@@ -182,11 +182,14 @@
 
             while (!validGuess)
             {
-                Console.Write("Take a guess: ");
+                Console.WriteLine();
+                Console.Write("Select one of the fields by entering its coordinates (Example: A1): ");
                 string playerGuess = Console.ReadLine().ToUpper();
+                Console.WriteLine();
+
                 if (playerGuess == "")
                 {
-                    Console.WriteLine("You haven't chosen anything. Take a valid guess.");
+                    Console.WriteLine("You haven't chosen anything. Try again.");
                 }
                 else if (playerGuess.Length > 2)
                 {
@@ -210,7 +213,7 @@
                     convertedGuessColumn = playerGuess[1] - 49;
                     if (convertedGuessRow < 0 || convertedGuessRow > rows - 1 || convertedGuessColumn < 0 || convertedGuessColumn > columns - 1)
                     {
-                        Console.WriteLine("Your guess is out of bounds. Try again.");
+                        Console.WriteLine("These coordinates are outside of the board. Try again.");
                         continue;
                     }
 
