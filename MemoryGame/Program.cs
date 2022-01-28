@@ -23,6 +23,7 @@
 
             while (keepPlaying)
             {
+                Console.Title = "Memory Game";
                 Console.Clear();
                 Console.WriteLine("Hello, welcome to Memory Game.");
                 Console.WriteLine();
@@ -80,7 +81,7 @@
             while (!chosenDifficulty)
             {
                 difficulty = Console.ReadLine().ToLower();
-                if (difficulty != "easy" & difficulty != "hard" & difficulty != "nightmare")
+                if (difficulty != "easy" && difficulty != "hard" && difficulty != "nightmare")
                 {
                     Console.WriteLine("Please select one of the available difficulties (Easy, Hard or Nightmare).");
                     continue;
@@ -370,7 +371,7 @@
                     Thread.Sleep(3000);
                     whichUncovered[firstGuessRow, firstGuessColumn] = 0;
                     whichUncovered[secondGuessRow, secondGuessColumn] = 0;
-                    chancesLeft -= 1;
+                    chancesLeft --;
                 }
 
                 // Check if all words are uncovered.
